@@ -1,0 +1,34 @@
+name: Update README
+
+on:
+  schedule:
+    - cron: "0 7 * * *"  # daily 07:00 UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests feedparser
+
+      - name: Update README
+        run: python update_readme.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          if [ -n "$(git status --porcelain README.md)" ]; then
+            git add README.md
+            git commit -m "chore: automated README update"
+            git push
+          fi
