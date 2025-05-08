@@ -34,5 +34,6 @@ jobs:
           if [[ -n $(git status --porcelain README.md) ]]; then
             git add README.md
             git commit -m "chore: automated README update [skip ci]"
-            git push
+            git checkout -B output
+            git push -f origin output
           fi

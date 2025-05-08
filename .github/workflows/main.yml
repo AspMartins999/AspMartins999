@@ -28,3 +28,5 @@ jobs:
           default_author: github_actions
           message: "chore: update contribution snake"
           add: "*.svg"
+          branch: output
+          push: true
