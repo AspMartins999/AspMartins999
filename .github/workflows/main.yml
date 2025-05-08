@@ -15,18 +15,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - uses: Platane/snk@v3
+      - uses: Platane/snk/svg-only@v3
+        id: snake-svg
         with:
           github_user_name: AspMartins999
           outputs: |
-            ./github-contribution-grid-snake.svg
-            ./github-contribution-grid-snake-dark.svg?palette=github-dark
-            
-      - name: Commit files
-        uses: EndBug/add-and-commit@v9
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      # Usando a ação de implementação específica para a branch output
+      - name: Push snake SVG to branch
+        uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
-          default_author: github_actions
-          message: "chore: update contribution snake"
-          add: "*.svg"
-          branch: output
-          push: true
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
