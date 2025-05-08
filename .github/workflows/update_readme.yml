@@ -11,23 +11,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Python
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+    
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
+    
       - name: Install dependencies
-        run: pip install requests feedparser
-
+        run: pip install -r requirements.txt
+    
       - name: Update README
         run: python update_readme.py
-
-      - name: Commit & push if changed
+    
+      - name: Commit & push if README changed
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          if [ -n "$(git status --porcelain README.md)" ]; then
+          if [[ -n $(git status --porcelain README.md) ]]; then
             git add README.md
             git commit -m "chore: automated README update"
             git push
