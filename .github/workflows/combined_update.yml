@@ -1,0 +1,58 @@
+name: Atualizar Perfil
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # todos os dias às 07:00 UTC
+  workflow_dispatch: # permite execução manual
+
+# Permissões necessárias
+permissions:
+  contents: write # permite push para o repositório
+
+jobs:
+  update-readme-and-graphics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run updater script
+        run: python update_readme.py
+
+      - name: Generate snake contribution graph
+        uses: Platane/snk/svg-only@v3
+        id: snake-svg
+        with:
+          github_user_name: AspMartins999
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      - name: Push changes to output branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Verificar se há alterações no README
+          if [[ -n $(git status --porcelain README.md) ]]; then
+            git add README.md
+            git commit -m "chore: atualização automática do README [skip ci]"
+          fi
+
+          # Adicionar arquivos snake SVG
+          if [ -d "dist" ]; then
+            git add dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-dark.svg
+            git commit -m "chore: atualização do gráfico snake de contribuições [skip ci]" || true
+          fi
+
+          # Criar ou atualizar branch output
+          git checkout -B output
+          git push -f origin output

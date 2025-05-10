@@ -1,0 +1,16 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Backups gerados pelo script
+.backups/
+
+# Cache do script
+.cache/
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
